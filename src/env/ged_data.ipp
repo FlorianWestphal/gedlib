@@ -42,9 +42,7 @@ edit_costs_{nullptr},
 node_costs_(),
 edge_costs_(),
 node_labels_(),
-node_label_ids_(),
 edge_labels_(),
-edge_label_ids_(),
 init_type_{Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES},
 delete_edit_costs_{true},
 max_num_nodes_{0},
@@ -155,17 +153,14 @@ set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_
 		}
 		break;
 	case Options::EditCosts::LETTER:
-		if (edit_cost_constants.size() == 4) {
-			edit_costs_ = new Letter<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2), edit_cost_constants.at(3)); // @suppress("Symbol is not resolved")
-		}
-		else if (edit_cost_constants.size() == 1) {
-			edit_costs_ = new Letter<GXLLabel, GXLLabel>(edit_cost_constants.at(0));
+		if (edit_cost_constants.size() == 3) {
+			edit_costs_ = new Letter<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2)); // @suppress("Symbol is not resolved")
 		}
 		else if (edit_cost_constants.size() == 0) {
 			edit_costs_ = new Letter<GXLLabel, GXLLabel>();
 		}
 		else {
-			throw Error("Wrong number of constants for selected edit costs ged::Options::EditCosts::LETTER. Expected: 4, 1, or 0; actual: " + std::to_string(edit_cost_constants.size()) + ".");
+			throw Error("Wrong number of constants for selected edit costs ged::Options::EditCosts::LETTER. Expected: 3 or 0; actual: " + std::to_string(edit_cost_constants.size()) + ".");
 		}
 		break;
 	case Options::EditCosts::CMU:
@@ -209,14 +204,13 @@ template<class UserNodeLabel, class UserEdgeLabel>
 LabelID
 GEDData<UserNodeLabel, UserEdgeLabel>::
 node_label_to_id_(const UserNodeLabel & node_label) {
-    auto itr = node_label_ids_.find(node_label);
-    if (itr != node_label_ids_.end()) {
-        return itr->second;
-    }
-    node_labels_.push_back(node_label);
-    LabelID node_label_id{node_labels_.size()};
-    node_label_ids_[node_label] = node_label_id;
-    return node_label_id;
+	LabelID id {0};
+	for (auto itr = node_labels_.begin(); itr != node_labels_.end(); itr++) {
+		if (*itr == node_label) return (id + 1);
+		id++;
+	}
+	node_labels_.push_back(node_label);
+	return (id + 1);
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -229,22 +223,18 @@ id_to_node_label(LabelID label_id) const {
 	return node_labels_.at(label_id - 1);
 }
 
-
 template<class UserNodeLabel, class UserEdgeLabel>
 LabelID
 GEDData<UserNodeLabel, UserEdgeLabel>::
 edge_label_to_id_(const UserEdgeLabel & edge_label) {
-    auto itr = edge_label_ids_.find(edge_label);
-    if (itr != edge_label_ids_.end()) {
-        return itr->second;
-    }
-    edge_labels_.push_back(edge_label);
-    LabelID edge_label_id{edge_labels_.size()};
-    edge_label_ids_[edge_label] = edge_label_id;
-    return edge_label_id;
+	LabelID id {0};
+	for (auto itr = edge_labels_.begin(); itr != edge_labels_.end(); itr++) {
+		if (*itr == edge_label) return (id + 1);
+		id++;
+	}
+	edge_labels_.push_back(edge_label);
+	return (id + 1);
 }
-
-
 
 template<class UserNodeLabel, class UserEdgeLabel>
 UserEdgeLabel

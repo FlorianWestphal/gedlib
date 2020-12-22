@@ -44,7 +44,7 @@ namespace ged {
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * | <tt>\--focal-graphs MEDIANS\|MEDOIDS</tt> | use medians or medoids as the focal graphs of the clusters | @p MEDIANS | n.a. |
  * | <tt>\--init-type CLUSTERS\|K-MEANS++</tt> | approach used for generating initial clusters | @p K-MEANS++ | if @p K-MEANS++, well distributed graphs are used as the first focal graphs |
- * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial clusterings | @p 10 | n.a. |
+ * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial clusterings | @p 50 | n.a. |
  * | <tt>\--randomness REAL\|PSEUDO</tt> | use real randomness or pseudo randomness | @p REAL | if @p REAL, the option @p \--seed has no effect |
  * | <tt>\--seed @<convertible to int greater equal 0@></tt> | seed for generating pseudo random numbers | @p 0 | n.a. |
  * | <tt>\--refine TRUE\|FALSE</tt> | improve node maps and sums of distances for converged clusters | @p TRUE | n.a. |
@@ -154,7 +154,7 @@ public:
 	 * @brief Returns number of iterations.
 	 * @return A vector that contains the number of iterations for each initial median for the last call to run().
 	 */
-	const std::vector<std::size_t> & get_num_itrs() const;
+	const vector<std::size_t> & get_num_itrs() const;
 
 	/*!
 	 * @brief Saves the computed focal graphs as GXL graphs and creates a GraphCollection file that lists all of them.
@@ -166,7 +166,7 @@ public:
 	/*!
 	 * @brief Computes the adjusted Rand index between the computed clustering and a ground truth clustering.
 	 * @param[in] ground_truth_clustering The ground truth clustering.
-	 * @return Adjusted Rand index between the two clusterings, i.e., a score between -1 and 1 that equals 1 just in case the two clusterings are identical.
+	 * @return Adjusted Rand index between the two clusterings, i.e., a score between 0 and 1 that equals 1 just in case the two clusterings are identical.
 	 */
 	double get_adjusted_rand_index(const std::vector<std::vector<GEDGraph::GraphID>> & ground_truth_clustering) const;
 
@@ -175,14 +175,6 @@ public:
 	 * @return Gini coefficient of the computed clustering, i.e., a score between 0 and 1 that equals 0 just in case the clustering is completely balanced and 1 just in case one cluster contains all data graphs.
 	 */
 	double get_gini_coefficient() const;
-    
-    /*!
-     * @brief Computes the mean silhouette coefficient of all clustered graphs.
-     * @return The mean silhouette score of all clustered graphs.
-     * The silhouette a of a clustered graph is a score between -1 and 1 that is close to 1 if the mean distance from the graph to the other graphs contained in its own cluster is much smaller than the mean distance
-     * to the graphs in the closest other cluster.
-     */
-    double get_silhouette_score() const;
 
 	/*!
 	 * @brief Returns pointer to the environment employed by the clustering heuristic.

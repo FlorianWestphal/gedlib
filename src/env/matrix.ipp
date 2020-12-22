@@ -182,14 +182,6 @@ operator*=(const ScalarT & scalar) {
 template<class ScalarT>
 Matrix<ScalarT> &
 Matrix<ScalarT>::
-operator/=(const ScalarT & scalar) {
-	matrix_ /= scalar;
-	return (*this);
-}
-
-template<class ScalarT>
-Matrix<ScalarT> &
-Matrix<ScalarT>::
 operator+=(const Matrix<ScalarT> & matrix) {
 	matrix_ += matrix.matrix_;
 	return (*this);
@@ -209,15 +201,6 @@ Matrix<ScalarT>::
 operator*(const ScalarT & scalar) const {
 	Matrix<ScalarT> new_matrix(*this);
 	new_matrix.matrix_ *= scalar;
-	return new_matrix;
-}
-
-template<class ScalarT>
-Matrix<ScalarT>
-Matrix<ScalarT>::
-operator/(const ScalarT & scalar) const {
-	Matrix<ScalarT> new_matrix(*this);
-	new_matrix.matrix_ /= scalar;
 	return new_matrix;
 }
 

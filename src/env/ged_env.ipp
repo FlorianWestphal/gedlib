@@ -54,9 +54,6 @@ void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_edit_costs(Options::EditCosts edit_costs, std::vector<double> edit_cost_constants) {
 	ged_data_.set_edit_costs_(edit_costs, edit_cost_constants);
-	if (ged_data_.eager_init_()) {
-		initialized_ = false;
-	}
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
@@ -64,9 +61,6 @@ void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_edit_costs(EditCosts<UserNodeLabel, UserEdgeLabel> * edit_costs) {
 	ged_data_.set_edit_costs_(edit_costs);
-	if (ged_data_.eager_init_()) {
-		initialized_ = false;
-	}
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
@@ -551,7 +545,7 @@ set_method(Options::GEDMethod method, const std::string & options) {
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-run_method(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id, bool use_shuffled_graphs) {
+run_method(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id) {
 	if (g_id >= ged_data_.num_graphs()) {
 		throw Error("The graph with ID " + std::to_string(g_id) + " has not been added to the environment.");
 	}
@@ -567,9 +561,6 @@ run_method(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id, bool use_shuffled_gra
 	// call selected GEDMethod and store results
 	if (ged_data_.shuffled_graph_copies_available() and (g_id == h_id)) {
 		ged_method_->run(g_id, ged_data_.id_shuffled_graph_copy(h_id));
-	}
-	else if (ged_data_.shuffled_graph_copies_available() and use_shuffled_graphs) {
-        ged_method_->run(ged_data_.id_shuffled_graph_copy(g_id), ged_data_.id_shuffled_graph_copy(h_id));
 	}
 	else {
 		ged_method_->run(g_id, h_id);

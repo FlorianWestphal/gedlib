@@ -454,13 +454,9 @@ private:
 
 	DMatrix edge_costs_;
 
-    std::vector<UserNodeLabel> node_labels_;
+	std::vector<UserNodeLabel> node_labels_;
 
-    std::map<UserNodeLabel, LabelID> node_label_ids_;
-
-    std::vector<UserEdgeLabel> edge_labels_;
-
-    std::map<UserEdgeLabel, LabelID> edge_label_ids_;
+	std::vector<UserEdgeLabel> edge_labels_;
 
 	Options::InitType init_type_;
 

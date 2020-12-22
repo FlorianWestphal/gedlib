@@ -51,7 +51,7 @@ namespace ged {
  * | <tt>\--max-itrs-without-update @<convertible to int@></tt> | maximal number of consecutive iterations in main block gradient descent where the median is not updated | @p 3 | if negative, no maximal number of iterations without update is enforced |
  * | <tt>\--time-limit @<convertible to double@></tt> | time limit in seconds for main block gradient descent | @p 0 | if less or equal @p 0, no time limit is enforced |
  * | <tt>\--epsilon @<convertible to double greater 0@></tt> | convergence threshold used everywhere | @p 0.0001 | n.a. |
- * | <tt>\--inits-increase-order @<convertible to int greater 0@></tt> | number of initial solutions for generic heuristic to increase the order of the median | @p 5 | used as starting points for (parallel) block gradient descents to determine node label of inserted node |
+ * | <tt>\--inits-increase-order @<convertible to int greater 0@></tt> | number of initial solutions for generic heuristic to increase the order of the median | @p 10 | used as starting points for (parallel) block gradient descents to determine node label of inserted node |
  * | <tt>\--init-type-increase-order CLUSTERS\|K-MEANS++</tt> | initialization type for generic heuristic to increase the order of the median | @p K-MEANS++ | if @p K-MEANS++, well distributed node labels are used as starting points |
  * | <tt>\--max-itrs-increase-order @<convertible to int@></tt> | maximal number of iterations used in generic heuristic to increase the order of the median | @p 10 |  if negative, no iteration based termination criterion is used |
  * | <tt>\--stdout 0\|1\|2</tt> | print runtime information to standard output stream | @p 2 | @p 0: no output; @p 1: output only before termination; @p 2: output also during optimization |
@@ -158,7 +158,7 @@ public:
 	 * @brief Returns number of iterations.
 	 * @return A vector that contains the number of iterations for each initial median for the last call to run().
 	 */
-	const std::vector<std::size_t> & get_num_itrs() const;
+	const vector<std::size_t> & get_num_itrs() const;
 
 	/*!
 	 * @brief Returns the number of times the order of the median decreased.
@@ -218,8 +218,6 @@ private:
 
 	std::size_t num_random_inits_;
 
-	std::size_t desired_num_random_inits_;
-
 	bool use_real_randomness_;
 
 	std::size_t seed_;
@@ -243,6 +241,8 @@ private:
 	std::size_t print_to_stdout_;
 
 	GEDGraph::GraphID median_id_;
+
+	UserNodeID median_node_id_prefix_;
 
 	std::map<GEDGraph::GraphID, NodeMap> node_maps_from_median_;
 
@@ -280,7 +280,7 @@ private:
 
 	void compute_mean_order_graph_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
 
-	void sample_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians);
+	void sample_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
 
 	bool termination_criterion_met_(bool converged, const Timer & timer, std::size_t itr, std::size_t itrs_without_update);
 

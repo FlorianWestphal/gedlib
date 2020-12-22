@@ -103,11 +103,6 @@ protected:
 	LSAPESolver::GreedyMethod greedy_method_;
 
 	/*!
-	 * @brief Specifies the enumeration method for optimal LSAPE solver.
-	 */
-	LSAPESolver::EnumerationMethod enumeration_method_;
-
-	/*!
 	 * @brief Flag that should be set to @p true if and only if the method computes a lower bound.
 	 */
 	bool compute_lower_bound_;

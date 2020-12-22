@@ -55,11 +55,6 @@ public:
 		INT_BASIC_SORT=4 //!< See https://doi.org/10.1007/978-3-319-18224-7_1.
 	};
 
-	enum EnumerationMethod {
-	    BASELINE=0,
-	    DISSIMILAR=1
-	};
-
 	/*!
 	 * @brief Constructs solver for LSAP problem instance.
 	 * @param[in] cost_matrix Pointer to the LSAP problem instance that should be solved.
@@ -88,12 +83,6 @@ public:
 	 * @param[in] greedy_method The greedy method that should be sued.
 	 */
 	void set_greedy_method(const GreedyMethod & greedy_method);
-
-	/*!
-	 * @brief Specifies the method used for enumerating multiple solutions.
-	 * @param[in] enumeration_method The enumeration method that should be used.
-	 */
-	void set_enumeration_method(const EnumerationMethod & enumeration_method);
 
 	/*!
 	 * @brief Makes the solver use the Hungarian algorithm for optimal solving.
@@ -192,8 +181,6 @@ private:
 	const DMatrix * cost_matrix_;
 
 	GreedyMethod greedy_method_;
-
-	EnumerationMethod enumeration_method_;
 
 	bool solve_optimally_;
 

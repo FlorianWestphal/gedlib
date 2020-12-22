@@ -26,7 +26,7 @@
 # @details 
 # Usage: 
 # ```sh
-# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|ijprai2020|sspr2018|vldbj2020|unit_tests|median|cluster|bst|ibd] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
+# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|unit_tests|median|cluster|bst] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
 # ```
 #
 # For more information, execute `$ python install.py --help`.
@@ -118,8 +118,8 @@ def parse_custom_types(custom_types):
 def create_directories():
 	print("\n***** Create directories for shared libraries, executables and output. *****")
 	commands = "mkdir -p lib; "
-	commands = commands + "mkdir -p tests/ijprai2020/bin; mkdir -p tests/ijprai2020/output; "
-	commands = commands + "mkdir -p tests/vldbj2020/bin; mkdir -p tests/vldbj2020/ini; mkdir -p tests/vldbj2020/results; "
+	commands = commands + "mkdir -p tests/tkde2019/bin; mkdir -p tests/tkde2019/output; "
+	commands = commands + "mkdir -p tests/vldbj2019/bin; mkdir -p tests/vldbj2019/ini; mkdir -p tests/vldbj2019/results; "
 	commands = commands + "mkdir -p median/bin; mkdir -p median/output; mkdir -p median/data; mkdir -p median/data/Letter; mkdir -p median/data/Mutagenicity; "
 	commands = commands + "mkdir -p tests/sspr2018/bin; mkdir -p tests/sspr2018/output; "
 	commands = commands + "mkdir -p tests/unit_tests/bin; mkdir -p tests/unit_tests/output"
@@ -139,18 +139,12 @@ def build_external_libraries():
 		f = open("ext/.INSTALLED", "w")
 		f.close()
 		
-def determine_gurobi_dylib(gurobi_root):
+def determine_gurobi_version(gurobi_root):
 	if not os.path.isdir(gurobi_root):
 		raise Exception("Invalid argument \"" + gurobi_root + "\" for option gurobi: not a directory. Usage: python install.py [--gurobi <path-to-root-directory-of-Gurobi>] [...]")
-	return "gurobi" + gurobi_root[gurobi_root.index("gurobi") + 6 : gurobi_root.index("gurobi") + 8]
-
-def determine_gurobi_statlib(gurobi_root):
-	statlib = "gurobi_c++"
-	if platform.system() == "Linux":
-		info = {item.split(":\t")[0] : item.split(":\t")[1] for item in subprocess.check_output("lsb_release -a", shell=True).decode("utf-8").split("\n")[:-1]}
-		if info["Distributor ID"] == "Ubuntu" and (info["Release"] == "16.04" or info["Release"] == "18.04"):
-			statlib = "gurobi_g++5.2"
-	return statlib	
+	gurobi_shared_lib = glob.glob(gurobi_root + "*/lib/libgurobi*.so")[0]
+	return gurobi_shared_lib[len(gurobi_shared_lib)-5:len(gurobi_shared_lib)-3]
+	
 
 def build_gedlib(args):
 	identifier = "gxl"
@@ -180,7 +174,7 @@ def build_gedlib(args):
 		else:
 			commands = commands + "Release"
 		if args.gurobi:
-			commands = commands + " -DGUROBI_ROOT=" + args.gurobi + " -DGUROBI_DYLIB=" + determine_gurobi_dylib(args.gurobi) + " -DGUROBI_STATLIB=" + determine_gurobi_statlib(args.gurobi)
+			commands = commands + " -DGUROBI_ROOT=" + args.gurobi + " -DGUROBI_VERSION=" + determine_gurobi_version(args.gurobi)
 		if platform.system() == "Darwin":
 			commands = commands + " -DOMP_HOME=" + check_output("brew --prefix", shell=True).decode("utf-8")
 		call(commands, shell=True)
@@ -213,13 +207,13 @@ print("**************************************************")
 parser = argparse.ArgumentParser(description="Installs GEDLIB and its dependencies unless they have already been installed.", epilog="If called without arguments, only the dependencies are installed.")
 parser.add_argument("--doc", help="build documentation", action="store_true")
 parser.add_argument("--lib", help="build shared library", metavar="gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>")
-parser.add_argument("--tests", help="build test executables", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|ijprai2020|pvldb2020|sspr2018|vldbj2020|vldbj_train_ml|vldbj_test_lsape_based_methods|vldbj_test_lp_based_methods|vldbj_test_ls_based_methods|vldbj_test_misc_methods|median|cluster|bst|ibd", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pvldb2020", "ijprai2020", "sspr2018", "vldbj2020", "vldbj_train_ml", "vldbj_test_lsape_based_methods", "vldbj_test_lp_based_methods", "vldbj_test_ls_based_methods", "vldbj_test_misc_methods", "median", "cluster", "bst", "ibd"])
+parser.add_argument("--tests", help="build test executables", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|vldbj_train_ml|vldbj_test_lsape_based_methods|vldbj_test_lp_based_methods|vldbj_test_ls_based_methods|vldbj_test_misc_methods|median|cluster|bst", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018", "vldbj2019", "vldbj_train_ml", "vldbj_test_lsape_based_methods", "vldbj_test_lp_based_methods", "vldbj_test_ls_based_methods", "vldbj_test_misc_methods", "median", "cluster", "bst"])
 parser.add_argument("--gurobi", metavar="<GUROBI_ROOT>", help="specify path to directory containing Gurobi")
 parser.add_argument("--debug", help="build in debug mode", action="store_true")
 parser.add_argument("--clean", help="clean build directory and update makefile before build", action="store_true")
 args = parser.parse_args()
 build_external_libraries()
 create_directories()
-if args.lib or args.tests or args.doc:
+if args.lib or args.tests or args.doc or args.median:
 	build_gedlib(args)
 print("\n***** Successfully installed GEDLIB. *****")
