@@ -579,6 +579,18 @@ run_method(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id) {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+void
+GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+delete_results(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id) {
+	std::pair<GEDGraph::GraphID, GEDGraph::GraphID> key(g_id, h_id);
+
+	lower_bounds_.erase(key);
+	upper_bounds_.erase(key);
+	runtimes_.erase(key);
+	node_maps_.erase(key);
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 std::pair<GEDGraph::GraphID, GEDGraph::GraphID>
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 graph_ids() const {
