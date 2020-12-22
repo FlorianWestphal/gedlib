@@ -61,7 +61,7 @@ public:
 	 * For Letter medium, the suggested arguments are <tt>node_ins_del_cost = 0.7</tt>, <tt>edge_ins_del_cost = 1.9</tt>, and <tt>alpha = 0.75</tt>.
 	 * For Letter low, the suggested arguments are <tt>node_ins_del_cost = 0.3</tt>, <tt>edge_ins_del_cost = 0.1</tt>, and <tt>alpha = 0.25</tt>.
 	 */
-	Letter(double node_ins_del_cost = 0.9, double edge_ins_del_cost = 1.7, double alpha = 0.75);
+	Letter(double node_ins_del_cost = 0.9, double edge_ins_del_cost = 1.7, double alpha = 0.75, double beta = 0.5);
 
 	virtual double node_ins_cost_fun(const UserNodeLabel & node_label) const final;
 
@@ -84,6 +84,8 @@ private:
 	double edge_ins_del_cost_;
 
 	double alpha_;
+
+	double beta_;
 };
 
 }

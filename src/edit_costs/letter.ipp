@@ -35,10 +35,11 @@ Letter<GXLLabel, GXLLabel>::
 
 template<>
 Letter<GXLLabel, GXLLabel>::
-Letter(double node_ins_del_cost, double edge_ins_del_cost, double alpha) :
+Letter(double node_ins_del_cost, double edge_ins_del_cost, double alpha, double beta) :
 node_ins_del_cost_{node_ins_del_cost},
 edge_ins_del_cost_{edge_ins_del_cost},
-alpha_{alpha} {}
+alpha_{alpha},
+beta_{beta} {}
 
 template<>
 double
@@ -58,9 +59,13 @@ template<>
 double
 Letter<GXLLabel, GXLLabel>::
 node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) const {
+	// FLW: Adjust node substitution cost to comply with: "Keyword spotting in historical handwritten documents based on graph matching" by Stauffer et al. 2018
 	double x_l_minus_x_r(std::stod(node_label_1.at("x")) - std::stod(node_label_2.at("x")));
 	double y_l_minus_y_r(std::stod(node_label_1.at("y")) - std::stod(node_label_2.at("y")));
-	return alpha_ * std::sqrt(std::pow(x_l_minus_x_r, 2) + std::pow(y_l_minus_y_r, 2));
+	// FLW: std_x and std_y are the same throughout the graph - for them to be available here, we encode it in every node...
+	double std_x(std::stod(node_label_1.at("std_x")));
+	double std_y(std::stod(node_label_1.at("std_y")));
+	return alpha_ * std::sqrt(beta_ * std_x * std::pow(x_l_minus_x_r, 2) + (1-beta_) * std_y * std::pow(y_l_minus_y_r, 2));
 }
 
 template<>
